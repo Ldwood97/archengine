@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArchEngine — AI Tools for Architecture</title>
+<meta name="description" content="AI-first digital tools built for architects. Render engines, design agents, and practice automation. Built by architects, powered by AI.">
+<meta property="og:title" content="ArchEngine — AI Tools for Architecture">
+<meta property="og:description" content="AI-first digital tools built for architects. Render engines, design agents, and practice automation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://archengine.io">
+<style>
+/* ─── Reset & Variables ────────────────────────────────────────────────── */
+:root {
+  --bg: #07070a;
+  --bg-subtle: #0d0d12;
+  --bg-card: #131318;
+  --bg-card-hover: #1a1a21;
+  --text: #f0f0f5;
+  --text-mid: #9d9db0;
+  --text-dim: #6b6b80;
+  --border: #1f1f2e;
+  --border-light: #2e2e40;
+  --accent: #6366f1;
+  --accent-dim: rgba(99,102,241,0.12);
+  --accent-glow: rgba(99,102,241,0.3);
+  --accent-bright: #818cf8;
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,0.12);
+  --cyan: #06b6d4;
+  --cyan-dim: rgba(6,182,212,0.12);
+  --orange: #f59e0b;
+  --orange-dim: rgba(245,158,11,0.12);
+  --pink: #ec4899;
+  --pink-dim: rgba(236,72,153,0.12);
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, video { max-width: 100%; display: block; }
+
+/* ─── Nav ──────────────────────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 32px;
+  background: rgba(7,7,10,0.8);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-size: 16px; font-weight: 800; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo .logo-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo .logo-icon svg { width: 16px; height: 16px; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { font-size: 14px; color: var(--text-mid); transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  padding: 8px 20px; background: var(--accent); color: #fff; border-radius: 8px;
+  font-size: 13px; font-weight: 600; transition: all 0.2s;
+}
+.nav-cta:hover { background: var(--accent-bright); transform: translateY(-1px); }
+
+/* ─── Hero ─────────────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 80px;
+  position: relative;
+}
+.hero::before {
+  content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 900px;
+  background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, rgba(6,182,212,0.06) 40%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 100px;
+  background: var(--accent-dim); border: 1px solid rgba(99,102,241,0.2);
+  font-size: 12px; font-weight: 600; color: var(--accent-bright);
+  letter-spacing: 0.5px; text-transform: uppercase;
+  margin-bottom: 32px; position: relative;
+}
+.hero-badge .badge-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+.hero h1 {
+  font-size: clamp(42px, 7vw, 76px); font-weight: 800;
+  line-height: 1.05; letter-spacing: -0.03em;
+  max-width: 900px; margin-bottom: 24px; position: relative;
+}
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent-bright), var(--cyan), var(--green));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero p {
+  font-size: clamp(16px, 2vw, 20px); color: var(--text-mid);
+  max-width: 580px; margin: 0 auto 40px; line-height: 1.7;
+}
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  padding: 14px 32px; background: var(--accent); color: #fff;
+  border-radius: 10px; font-size: 15px; font-weight: 700;
+  transition: all 0.2s; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { background: var(--accent-bright); transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+.btn-secondary {
+  padding: 14px 32px; background: transparent; color: var(--text);
+  border-radius: 10px; font-size: 15px; font-weight: 600;
+  border: 1px solid var(--border-light); transition: all 0.2s; cursor: pointer;
+}
+.btn-secondary:hover { background: var(--bg-card); border-color: var(--text-dim); }
+
+/* ─── Trusted By ───────────────────────────────────────────────────────── */
+.trust-strip {
+  padding: 40px 24px 80px; text-align: center;
+}
+.trust-strip p {
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--text-dim); margin-bottom: 20px;
+}
+.trust-logos {
+  display: flex; gap: 40px; justify-content: center; align-items: center; flex-wrap: wrap;
+  opacity: 0.4;
+}
+.trust-logos span {
+  font-size: 14px; font-weight: 700; color: var(--text-mid); letter-spacing: 1px;
+}
+
+/* ─── Section Styling ──────────────────────────────────────────────────── */
+section { padding: 100px 24px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--accent-bright); margin-bottom: 16px;
+}
+.section-label .line { width: 24px; height: 1px; background: var(--accent); }
+.section-title {
+  font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px;
+}
+.section-subtitle {
+  font-size: 17px; color: var(--text-mid); max-width: 560px; line-height: 1.7;
+}
+
+/* ─── Products ─────────────────────────────────────────────────────────── */
+.products-section { background: var(--bg-subtle); }
+.products-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  margin-top: 60px;
+}
+.product-card {
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--bg-card); border: 1px solid var(--border);
+  transition: all 0.4s; position: relative;
+}
+.product-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.product-card.featured {
+  grid-column: 1 / -1;
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: 0;
+}
+.product-visual {
+  position: relative; overflow: hidden;
+}
+.product-visual img, .product-visual video {
+  width: 100%; height: 100%; object-fit: cover;
+  aspect-ratio: 16/10;
+}
+.product-card.featured .product-visual img,
+.product-card.featured .product-visual video {
+  aspect-ratio: auto; min-height: 400px;
+}
+.product-body { padding: 36px; display: flex; flex-direction: column; justify-content: center; }
+.product-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; width: fit-content;
+}
+.status-live { background: var(--green-dim); color: var(--green); }
+.status-soon { background: var(--orange-dim); color: var(--orange); }
+.status-dev { background: var(--cyan-dim); color: var(--cyan); }
+.product-status .status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.status-live .status-dot { background: var(--green); animation: pulse 2s ease-in-out infinite; }
+.status-soon .status-dot { background: var(--orange); }
+.status-dev .status-dot { background: var(--cyan); }
+.product-body h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.01em; }
+.product-body .product-desc {
+  font-size: 15px; color: var(--text-mid); line-height: 1.7; margin-bottom: 20px;
+}
+.product-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.product-tag {
+  padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  background: var(--bg-card-hover); color: var(--text-dim); border: 1px solid var(--border);
+}
+.product-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 600; color: var(--accent-bright); transition: gap 0.2s;
+}
+.product-link:hover { gap: 10px; }
+.product-link svg { transition: transform 0.2s; }
+
+/* Small product cards (non-featured) */
+.product-card:not(.featured) .product-visual img {
+  aspect-ratio: 16/9;
+}
+.product-card:not(.featured) .product-body { padding: 24px; }
+.product-card:not(.featured) h3 { font-size: 20px; }
+
+/* ─── Services ─────────────────────────────────────────────────────────── */
+.services-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-top: 60px;
+}
+.service-card {
+  padding: 36px; border-radius: var(--radius-lg);
+  background: var(--bg-card); border: 1px solid var(--border);
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.service-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.service-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.service-card:hover::before { opacity: 1; }
+.service-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px; font-size: 24px;
+}
+.service-icon.indigo { background: var(--accent-dim); }
+.service-icon.cyan { background: var(--cyan-dim); }
+.service-icon.green { background: var(--green-dim); }
+.service-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+.service-card p { font-size: 14px; color: var(--text-mid); line-height: 1.7; margin-bottom: 20px; }
+.service-price {
+  font-size: 13px; color: var(--text-dim); padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.service-price strong { color: var(--text-mid); }
+
+/* ─── How We Work ──────────────────────────────────────────────────────── */
+.how-section { background: var(--bg-subtle); }
+.how-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  margin-top: 60px; position: relative;
+}
+.how-step {
+  text-align: center; padding: 32px 20px;
+  position: relative;
+}
+.how-step-num {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--accent-dim); border: 2px solid var(--accent);
+  color: var(--accent-bright); font-size: 18px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.how-step h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.how-step p { font-size: 13px; color: var(--text-mid); line-height: 1.7; }
+.how-connector {
+  position: absolute; top: 44px; left: calc(50% + 34px); width: calc(100% - 68px);
+  height: 2px; background: var(--border);
+}
+.how-step:last-child .how-connector { display: none; }
+
+/* ─── Tech Stack ───────────────────────────────────────────────────────── */
+.tech-banner {
+  padding: 80px 24px; text-align: center; position: relative; overflow: hidden;
+}
+.tech-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(6,182,212,0.06), rgba(16,185,129,0.06));
+}
+.tech-inner { max-width: 700px; margin: 0 auto; position: relative; }
+.tech-chips {
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 24px;
+}
+.tech-chip {
+  padding: 8px 16px; border-radius: 100px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  font-size: 13px; color: var(--text-mid); font-weight: 500;
+  display: flex; align-items: center; gap: 6px;
+}
+.tech-chip .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+.chip-dot.indigo { background: var(--accent); }
+.chip-dot.cyan { background: var(--cyan); }
+.chip-dot.green { background: var(--green); }
+.chip-dot.orange { background: var(--orange); }
+
+/* ─── Pricing ──────────────────────────────────────────────────────────── */
+.pricing-section { background: var(--bg-subtle); }
+.pricing-toggle {
+  display: flex; gap: 4px; justify-content: center; margin-top: 32px;
+  padding: 4px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border);
+  width: fit-content; margin-left: auto; margin-right: auto;
+}
+.toggle-btn {
+  padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  color: var(--text-dim); cursor: pointer; transition: all 0.2s;
+  border: none; background: transparent;
+}
+.toggle-btn.active { background: var(--accent); color: #fff; }
+.pricing-cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-top: 40px;
+}
+.pricing-card {
+  padding: 36px 28px; border-radius: var(--radius-lg);
+  background: var(--bg-card); border: 1px solid var(--border);
+  transition: all 0.3s; position: relative;
+}
+.pricing-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.pricing-card.featured {
+  border-color: var(--accent);
+  background: linear-gradient(to bottom, rgba(99,102,241,0.05), var(--bg-card));
+}
+.pricing-card.featured::before {
+  content: 'RECOMMENDED'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  padding: 4px 14px; border-radius: 100px;
+  background: var(--accent); color: #fff;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+}
+.pricing-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.pricing-desc { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+.pricing-amount {
+  font-size: 40px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.02em;
+}
+.pricing-amount small { font-size: 16px; font-weight: 400; color: var(--text-dim); }
+.pricing-note { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; }
+.pricing-features { list-style: none; margin-bottom: 28px; padding: 0; }
+.pricing-features li {
+  font-size: 14px; color: var(--text-mid); padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.pricing-features li:last-child { border-bottom: none; }
+.check { color: var(--accent-bright); font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.pricing-cta a {
+  display: block; width: 100%; padding: 14px; border-radius: 10px;
+  font-size: 14px; font-weight: 700; text-align: center; transition: all 0.2s;
+}
+.cta-filled { background: var(--accent); color: #fff; }
+.cta-filled:hover { background: var(--accent-bright); }
+.cta-outline { background: transparent; color: var(--text); border: 1px solid var(--border-light); }
+.cta-outline:hover { background: var(--bg-card-hover); border-color: var(--text-dim); }
+
+/* ─── About ────────────────────────────────────────────────────────────── */
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  margin-top: 60px;
+}
+.about-text h3 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+.about-text p { font-size: 15px; color: var(--text-mid); line-height: 1.8; margin-bottom: 16px; }
+.about-stats {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+}
+.stat {
+  padding: 24px; border-radius: var(--radius); background: var(--bg-card);
+  border: 1px solid var(--border); text-align: center;
+}
+.stat-num {
+  font-size: 32px; font-weight: 800; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent-bright), var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.stat-label { font-size: 12px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+
+/* ─── CTA Section ──────────────────────────────────────────────────────── */
+.cta-section {
+  padding: 120px 24px; text-align: center; position: relative;
+}
+.cta-section::before {
+  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
+  pointer-events: none; opacity: 0.5;
+}
+.cta-inner { max-width: 600px; margin: 0 auto; position: relative; }
+.cta-inner h2 {
+  font-size: clamp(28px, 4vw, 40px); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 16px;
+}
+.cta-inner p { font-size: 17px; color: var(--text-mid); margin-bottom: 32px; }
+
+/* ─── Footer ───────────────────────────────────────────────────────────── */
+.footer {
+  padding: 48px 24px; border-top: 1px solid var(--border);
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-brand { font-size: 13px; color: var(--text-dim); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--text-dim); transition: color 0.2s; }
+.footer-links a:hover { color: var(--text); }
+
+/* ─── Animations ───────────────────────────────────────────────────────── */
+.fade-up {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.stagger > * { opacity: 0; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.16,1,0.3,1); }
+.stagger.visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0s; }
+.stagger.visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+.stagger.visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+.stagger.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+
+/* Grid background */
+.grid-bg {
+  position: fixed; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black, transparent);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black, transparent);
+}
+
+/* ─── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .products-grid { grid-template-columns: 1fr; }
+  .product-card.featured { grid-template-columns: 1fr; }
+  .product-card.featured .product-visual img,
+  .product-card.featured .product-visual video { aspect-ratio: 16/9; min-height: auto; }
+  .services-grid, .pricing-cards { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .how-steps { grid-template-columns: repeat(2, 1fr); }
+  .how-connector { display: none !important; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-inner { flex-direction: column; gap: 16px; }
+}
+@media (max-width: 600px) {
+  .hero-actions { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-secondary { width: 100%; max-width: 300px; text-align: center; justify-content: center; }
+  .how-steps { grid-template-columns: 1fr; }
+  .about-stats { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ─── Navigation ──────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    ArchEngine
+  </div>
+  <div class="nav-links">
+    <a href="#products">Products</a>
+    <a href="#services">Services</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About</a>
+    <a href="https://renderstudio.archengine.io" class="nav-cta">Launch Render Studio</a>
+  </div>
+</nav>
+
+<!-- ─── Hero ────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    AI-powered architecture tools
+  </div>
+  <h1>The tools architects<br><span class="gradient">actually need</span></h1>
+  <p>AI render engines, design agents, and practice automation. Built by a registered architect who uses these tools every day.</p>
+  <div class="hero-actions">
+    <a href="#products" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Explore products
+    </a>
+    <a href="#services" class="btn-secondary">Build something custom</a>
+  </div>
+</section>
+
+<!-- ─── Products ────────────────────────────────────────────────────── -->
+<section class="products-section" id="products">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label"><span class="line"></span> Products</div>
+      <h2 class="section-title">Off-the-shelf AI tools for practice</h2>
+      <p class="section-subtitle">Each product works standalone or as part of a bundle. Use them on our platform, self-host, or get a desktop licence.</p>
+    </div>
+    <div class="products-grid stagger">
+
+      <!-- Render Studio — Featured -->
+      <div class="product-card featured">
+        <div class="product-visual">
+          <video src="img/render-studio/video.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <div class="product-body">
+          <div class="product-status status-live"><span class="status-dot"></span> Live</div>
+          <h3>Render Studio</h3>
+          <p class="product-desc">Turn floor plans and elevations into presentation-quality renders in under 30 seconds. Pro marker concept sketches, photorealistic images, and cinematic video walkthroughs.</p>
+          <div class="product-tags">
+            <span class="product-tag">AI Renders</span>
+            <span class="product-tag">Video Walkthroughs</span>
+            <span class="product-tag">Two Styles</span>
+            <span class="product-tag">Veo 3.1</span>
+          </div>
+          <a href="https://renderstudio.archengine.io" class="product-link">
+            Launch Render Studio
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Planning Agent — Coming Soon -->
+      <div class="product-card">
+        <div class="product-visual">
+          <div style="aspect-ratio:16/9; background: linear-gradient(135deg, var(--bg-card-hover), var(--bg-card)); display:flex; align-items:center; justify-content:center;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5" opacity="0.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-status status-soon"><span class="status-dot"></span> Coming soon</div>
+          <h3>Planning Agent</h3>
+          <p class="product-desc">AI-powered planning application prep. Generates design and access statements, analyses policy compliance, and drafts condition responses.</p>
+          <div class="product-tags">
+            <span class="product-tag">Planning Apps</span>
+            <span class="product-tag">Policy Analysis</span>
+            <span class="product-tag">Document Gen</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Site Analyser — In Development -->
+      <div class="product-card">
+        <div class="product-visual">
+          <div style="aspect-ratio:16/9; background: linear-gradient(135deg, var(--bg-card-hover), var(--bg-card)); display:flex; align-items:center; justify-content:center;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" opacity="0.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-status status-dev"><span class="status-dot"></span> In development</div>
+          <h3>Site Analyser</h3>
+          <p class="product-desc">Upload a site address and get an instant analysis: constraints, planning history, flood risk, conservation areas, and neighbourhood context.</p>
+          <div class="product-tags">
+            <span class="product-tag">Site Research</span>
+            <span class="product-tag">Constraints</span>
+            <span class="product-tag">Auto-report</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Services ────────────────────────────────────────────────────── -->
+<section id="services">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label"><span class="line"></span> Services</div>
+      <h2 class="section-title">We build tools for your practice</h2>
+      <p class="section-subtitle">Every practice works differently. We build and customise AI tools to fit your workflow, not the other way around.</p>
+    </div>
+    <div class="services-grid stagger">
+      <div class="service-card">
+        <div class="service-icon indigo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent-bright)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Self-hosted setup</h3>
+        <p>Take any of our products, configure it for your practice, and run it on your own infrastructure. Your API keys, your data, no monthly platform fee.</p>
+        <div class="service-price">From <strong>&pound;2,950</strong> one-time setup</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon cyan">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Bespoke tool build</h3>
+        <p>A completely custom AI tool built around your specific needs. Custom UI, custom workflows, custom AI prompts, and trained on your design standards.</p>
+        <div class="service-price">From <strong>&pound;6,950</strong> one-time build</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon green">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3>AI integration</h3>
+        <p>Already have systems in place? We integrate AI capabilities into your existing tools, templates, and processes. Revit plugins, AutoCAD automation, document generation.</p>
+        <div class="service-price">Scoped per project &mdash; <strong>get in touch</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── How We Work ────────────────────────────────────────────────── -->
+<section class="how-section">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label"><span class="line"></span> How we work</div>
+      <h2 class="section-title">From brief to working tool</h2>
+      <p class="section-subtitle">Whether you pick an off-the-shelf product or commission something custom, the process is straightforward.</p>
+    </div>
+    <div class="how-steps stagger">
+      <div class="how-step">
+        <div class="how-connector"></div>
+        <div class="how-step-num">1</div>
+        <h3>Discovery call</h3>
+        <p>30-minute call to understand your workflows, pain points, and what you need the tool to do.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-connector"></div>
+        <div class="how-step-num">2</div>
+        <h3>Scope and quote</h3>
+        <p>Written scope with fixed pricing. No surprises. For off-the-shelf products, skip straight to setup.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-connector"></div>
+        <div class="how-step-num">3</div>
+        <h3>Build and configure</h3>
+        <p>We build, customise, and test the tool against your real projects and real drawings.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <h3>Handover and training</h3>
+        <p>Full setup, documentation, and a training session. Optional ongoing support at &pound;75/month.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Tech Stack ─────────────────────────────────────────────────── -->
+<section class="tech-banner">
+  <div class="tech-inner fade-up">
+    <div class="section-label" style="justify-content:center;"><span class="line"></span> The stack</div>
+    <h2 class="section-title" style="text-align:center;">Built on the best AI models available</h2>
+    <p class="section-subtitle" style="margin: 0 auto; text-align:center;">We use the latest foundation models and build purpose-specific tools on top. When the models improve, your tools improve.</p>
+    <div class="tech-chips">
+      <span class="tech-chip"><span class="chip-dot indigo"></span> Google Gemini</span>
+      <span class="tech-chip"><span class="chip-dot cyan"></span> Veo 3.1</span>
+      <span class="tech-chip"><span class="chip-dot green"></span> Claude</span>
+      <span class="tech-chip"><span class="chip-dot orange"></span> Custom Fine-tuning</span>
+      <span class="tech-chip"><span class="chip-dot indigo"></span> 2K+ Resolution</span>
+      <span class="tech-chip"><span class="chip-dot cyan"></span> Desktop + Cloud</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Pricing ─────────────────────────────────────────────────────── -->
+<section class="pricing-section" id="pricing">
+  <div class="section-inner">
+    <div class="fade-up" style="text-align:center;">
+      <div class="section-label" style="justify-content:center;"><span class="line"></span> Pricing</div>
+      <h2 class="section-title" style="text-align:center;">Simple, transparent pricing</h2>
+      <p class="section-subtitle" style="margin:0 auto;">Use our platform, host it yourself, or get something built from scratch. Every option includes the same core tools.</p>
+    </div>
+    <div class="pricing-cards stagger">
+
+      <div class="pricing-card">
+        <h3>Platform</h3>
+        <div class="pricing-desc">Use our tools on our infrastructure</div>
+        <div class="pricing-amount">From &pound;49<small>/month</small></div>
+        <div class="pricing-note">Per product, credit-based</div>
+        <ul class="pricing-features">
+          <li><span class="check">&#10003;</span> No setup or API keys needed</li>
+          <li><span class="check">&#10003;</span> All features included</li>
+          <li><span class="check">&#10003;</span> Cloud storage and projects</li>
+          <li><span class="check">&#10003;</span> Desktop app available</li>
+          <li><span class="check">&#10003;</span> Bundle discounts for multiple tools</li>
+        </ul>
+        <div class="pricing-cta" style="margin-top:20px;">
+          <a href="https://renderstudio.archengine.io/signup" class="cta-filled">Start with 3 free renders</a>
+        </div>
+      </div>
+
+      <div class="pricing-card featured">
+        <h3>Self-Hosted</h3>
+        <div class="pricing-desc">Your practice, your infrastructure</div>
+        <div class="pricing-amount">&pound;2,950</div>
+        <div class="pricing-note">One-time per product</div>
+        <ul class="pricing-features">
+          <li><span class="check">&#10003;</span> Complete source code</li>
+          <li><span class="check">&#10003;</span> Configured for your practice</li>
+          <li><span class="check">&#10003;</span> Unlimited usage, your API keys</li>
+          <li><span class="check">&#10003;</span> Desktop app included</li>
+          <li><span class="check">&#10003;</span> Optional &pound;75/mo support</li>
+        </ul>
+        <div class="pricing-cta" style="margin-top:20px;">
+          <a href="mailto:hello@archengine.io?subject=Self-Hosted%20Enquiry" class="cta-filled">Get in touch</a>
+        </div>
+      </div>
+
+      <div class="pricing-card">
+        <h3>Bespoke</h3>
+        <div class="pricing-desc">A tool built around your workflow</div>
+        <div class="pricing-amount">&pound;6,950</div>
+        <div class="pricing-note">One-time build</div>
+        <ul class="pricing-features">
+          <li><span class="check">&#10003;</span> Everything in Self-Hosted</li>
+          <li><span class="check">&#10003;</span> Custom UI and branding</li>
+          <li><span class="check">&#10003;</span> Custom AI prompts and styles</li>
+          <li><span class="check">&#10003;</span> Tailored to your workflow</li>
+          <li><span class="check">&#10003;</span> Training and onboarding</li>
+        </ul>
+        <div class="pricing-cta" style="margin-top:20px;">
+          <a href="mailto:hello@archengine.io?subject=Bespoke%20Build%20Enquiry" class="cta-outline">Get in touch</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── About ──────────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-text fade-up">
+        <div class="section-label"><span class="line"></span> About</div>
+        <h2 class="section-title">Built by an architect,<br>for architects</h2>
+        <p>ArchEngine is founded by Lewis Wood, a RIBA Chartered and ARB Registered architect who runs a practice across the Isle of Wight and London.</p>
+        <p>These tools were built to solve real problems in a real practice. Every feature exists because we needed it ourselves. No venture capital, no corporate roadmap. Just tools that make architectural practice faster, smarter, and more profitable.</p>
+        <a href="mailto:hello@archengine.io" class="btn-primary" style="margin-top:16px; width:fit-content;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          hello@archengine.io
+        </a>
+      </div>
+      <div class="about-stats stagger">
+        <div class="stat">
+          <div class="stat-num">RIBA</div>
+          <div class="stat-label">Chartered Practice</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Office locations</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">30s</div>
+          <div class="stat-label">Average render time</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">AI availability</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Final CTA ──────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner fade-up">
+    <h2>Ready to bring AI into<br>your practice?</h2>
+    <p>Start with Render Studio for free. See what AI tools built by architects actually feel like to use.</p>
+    <div class="hero-actions">
+      <a href="https://renderstudio.archengine.io/signup" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Try Render Studio free
+      </a>
+      <a href="mailto:hello@archengine.io?subject=Bespoke%20Enquiry" class="btn-secondary">Talk to us about a custom build</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ─────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">ArchEngine &mdash; AI tools for architecture. A Woods Ltd company.</div>
+    <div class="footer-links">
+      <a href="#products">Products</a>
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="mailto:hello@archengine.io">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── Scroll Animations ──────────────────────────────────────────── -->
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-up, .stagger').forEach(el => observer.observe(el));
+
+// Nav scroll effect
+const nav = document.querySelector('.nav');
+window.addEventListener('scroll', () => {
+  nav.style.borderBottomColor = window.scrollY > 50
+    ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.04)';
+});
+</script>
+
+</body>
+</html>
