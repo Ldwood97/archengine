@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Render Studio — AI Architectural Renders in Seconds | ArchEngine</title>
+<meta name="description" content="Turn floor plans and elevations into presentation-quality architectural renders using AI. Pro marker sketches, photorealistic images, and cinematic videos.">
+<meta property="og:title" content="Render Studio — AI Architectural Renders in Seconds">
+<meta property="og:description" content="Turn floor plans and elevations into presentation-quality architectural renders using AI.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://archengine.io/products/render-studio/">
+<style>
+/* ─── Reset & Variables ────────────────────────────────────────────────── */
+:root {
+  --bg: #07070a;
+  --bg-subtle: #0d0d12;
+  --bg-card: #131318;
+  --bg-card-hover: #1a1a21;
+  --text: #f0f0f5;
+  --text-mid: #9d9db0;
+  --text-dim: #6b6b80;
+  --border: #1f1f2e;
+  --border-light: #2e2e40;
+  --accent: #10b981;
+  --accent-dim: rgba(16,185,129,0.12);
+  --accent-glow: rgba(16,185,129,0.3);
+  --indigo: #6366f1;
+  --indigo-dim: rgba(99,102,241,0.12);
+  --purple: #8b5cf6;
+  --purple-dim: rgba(139,92,246,0.15);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.15);
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img, video { max-width: 100%; display: block; }
+
+/* ─── Nav (ArchEngine global) ─────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 32px;
+  background: rgba(7,7,10,0.85);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-size: 15px; font-weight: 700; letter-spacing: 1px;
+  color: var(--text); display: flex; align-items: center; gap: 10px;
+}
+.nav-logo svg { flex-shrink: 0; }
+.nav-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--text-dim);
+}
+.nav-breadcrumb .sep { font-size: 12px; }
+.nav-breadcrumb .current { color: var(--accent); font-weight: 600; }
+.nav-links { display: flex; align-items: center; gap: 24px; }
+.nav-links a { font-size: 14px; color: var(--text-mid); transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  padding: 8px 20px; background: var(--accent); color: #000; border-radius: 8px;
+  font-size: 13px; font-weight: 600; transition: all 0.2s;
+}
+.nav-cta:hover { background: #34d399; transform: translateY(-1px); }
+
+/* ─── Hero ─────────────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 80px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 800px;
+  background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
+  pointer-events: none; opacity: 0.5;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 100px;
+  background: var(--accent-dim); border: 1px solid rgba(16,185,129,0.2);
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.5px; text-transform: uppercase;
+  margin-bottom: 32px; position: relative;
+}
+.hero-badge .badge-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+.hero h1 {
+  font-size: clamp(40px, 7vw, 72px); font-weight: 800;
+  line-height: 1.05; letter-spacing: -0.03em;
+  max-width: 800px; margin-bottom: 24px; position: relative;
+}
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent), var(--blue), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: clamp(16px, 2vw, 20px); color: var(--text-mid);
+  max-width: 560px; margin: 0 auto 40px; line-height: 1.7;
+}
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  padding: 14px 32px; background: var(--accent); color: #000;
+  border-radius: 10px; font-size: 15px; font-weight: 700;
+  transition: all 0.2s; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { background: #34d399; transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+.btn-secondary {
+  padding: 14px 32px; background: transparent; color: var(--text);
+  border-radius: 10px; font-size: 15px; font-weight: 600;
+  border: 1px solid var(--border-light); transition: all 0.2s; cursor: pointer;
+}
+.btn-secondary:hover { background: var(--bg-card); border-color: var(--text-dim); }
+
+/* ─── Showcase Gallery ─────────────────────────────────────────────────── */
+.showcase {
+  padding: 0 24px 100px; max-width: 1200px; margin: 0 auto;
+  position: relative;
+}
+.showcase-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.showcase-item {
+  border-radius: var(--radius); overflow: hidden;
+  position: relative; cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.showcase-item:hover { transform: scale(1.03); z-index: 2; }
+.showcase-item img {
+  width: 100%; aspect-ratio: 16/10; object-fit: cover;
+  transition: filter 0.4s;
+}
+.showcase-item:hover img { filter: brightness(1.1); }
+.showcase-item .tag {
+  position: absolute; bottom: 10px; left: 10px;
+  padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.tag-marker { background: rgba(139,92,246,0.8); color: white; }
+.tag-photo { background: rgba(16,185,129,0.8); color: white; }
+.showcase-fade {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
+  background: linear-gradient(transparent, var(--bg));
+  pointer-events: none;
+}
+
+/* ─── Section Styling ──────────────────────────────────────────────────── */
+section { padding: 100px 24px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--accent); margin-bottom: 16px;
+}
+.section-label .line { width: 24px; height: 1px; background: var(--accent); }
+.section-title {
+  font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px;
+}
+.section-subtitle {
+  font-size: 17px; color: var(--text-mid); max-width: 540px; line-height: 1.7;
+}
+
+/* ─── How It Works ─────────────────────────────────────────────────────── */
+.how-section { background: var(--bg-subtle); }
+.steps {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  margin-top: 60px;
+}
+.step {
+  padding: 32px; border-radius: var(--radius-lg);
+  background: var(--bg-card); border: 1px solid var(--border);
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.step:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.step::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.step:hover::before { opacity: 1; }
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--accent-dim); color: var(--accent);
+  font-size: 16px; font-weight: 800; margin-bottom: 20px;
+}
+.step h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.step p { font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+
+/* ─── Features ─────────────────────────────────────────────────────────── */
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-top: 60px;
+}
+.feature-card {
+  padding: 32px; border-radius: var(--radius-lg);
+  background: var(--bg-card); border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.feature-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.feature-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; font-size: 22px;
+}
+.feature-icon.green { background: var(--accent-dim); }
+.feature-icon.purple { background: var(--purple-dim); }
+.feature-icon.blue { background: var(--blue-dim); }
+.feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.feature-card p { font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+
+/* ─── Style Comparison ─────────────────────────────────────────────────── */
+.compare-section { background: var(--bg-subtle); }
+.compare-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  margin-top: 60px;
+}
+.compare-card {
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--bg-card); border: 1px solid var(--border);
+}
+.compare-card img {
+  width: 100%; aspect-ratio: 16/10; object-fit: cover;
+}
+.compare-info { padding: 24px; }
+.compare-info .style-label {
+  display: inline-block; padding: 4px 12px; border-radius: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 12px;
+}
+.style-label.marker { background: var(--purple-dim); color: var(--purple); }
+.style-label.photo { background: var(--accent-dim); color: var(--accent); }
+.compare-info h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.compare-info p { font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+
+/* ─── Video Showcase ───────────────────────────────────────────────────── */
+.video-section { background: var(--bg); }
+.video-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  margin-top: 60px;
+}
+.video-card {
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--bg-card); border: 1px solid var(--border);
+  position: relative; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+  cursor: pointer;
+}
+.video-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.video-card:hover video { filter: brightness(1.1); }
+.video-card video {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block;
+  transition: filter 0.4s;
+}
+.video-card .video-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(transparent 50%, rgba(0,0,0,0.7));
+}
+.video-card .video-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+}
+.video-card .video-label { font-size: 13px; font-weight: 600; color: white; }
+.video-card .video-duration {
+  font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 500;
+  padding: 3px 8px; border-radius: 4px;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+}
+.video-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(139,92,246,0.8); color: white;
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.video-callout {
+  margin-top: 40px; text-align: center;
+  font-size: 15px; color: var(--text-dim); line-height: 1.7;
+}
+.video-callout strong { color: var(--text-mid); }
+
+/* ─── AI Banner ────────────────────────────────────────────────────────── */
+.ai-banner {
+  padding: 80px 24px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.ai-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(16,185,129,0.08), rgba(59,130,246,0.08));
+}
+.ai-banner-inner {
+  max-width: 700px; margin: 0 auto; position: relative;
+}
+.ai-chips {
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+  margin-top: 24px;
+}
+.ai-chip {
+  padding: 8px 16px; border-radius: 100px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  font-size: 13px; color: var(--text-mid); font-weight: 500;
+  display: flex; align-items: center; gap: 6px;
+}
+.ai-chip .chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+.chip-dot.green { background: var(--accent); }
+.chip-dot.purple { background: var(--purple); }
+.chip-dot.blue { background: var(--blue); }
+
+/* ─── Pricing ──────────────────────────────────────────────────────────── */
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-top: 60px;
+}
+.pricing-row-2 {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  margin-top: 16px; max-width: 580px; margin-left: auto; margin-right: auto;
+}
+.pricing-divider {
+  margin: 48px auto 0; padding-top: 48px; border-top: 1px solid var(--border);
+  max-width: 1100px; text-align: center;
+}
+.pricing-divider-label {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 24px;
+}
+.per-credit { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.best-value {
+  position: absolute; top: -12px; right: 20px;
+  padding: 4px 12px; border-radius: 100px;
+  background: var(--purple); color: #fff;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.5px;
+}
+.price-card {
+  padding: 36px 28px; border-radius: var(--radius-lg);
+  background: var(--bg-card); border: 1px solid var(--border);
+  position: relative; transition: all 0.3s;
+}
+.price-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+.price-card.featured {
+  border-color: var(--accent);
+  background: linear-gradient(to bottom, rgba(16,185,129,0.05), var(--bg-card));
+}
+.price-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  padding: 4px 14px; border-radius: 100px;
+  background: var(--accent); color: #000;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+}
+.price-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.price-desc { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+.price-amount {
+  font-size: 40px; font-weight: 800; margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+.price-amount small { font-size: 16px; font-weight: 400; color: var(--text-dim); }
+.price-note { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; }
+.price-features { list-style: none; margin-bottom: 28px; padding: 0; }
+.price-features li {
+  font-size: 14px; color: var(--text-mid); padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.price-features li:last-child { border-bottom: none; }
+.check { color: var(--accent); font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.price-cta a {
+  display: block; width: 100%; padding: 14px; border-radius: 10px;
+  font-size: 14px; font-weight: 700; text-align: center;
+  transition: all 0.2s; cursor: pointer; border: none;
+}
+.cta-green { background: var(--accent); color: #000; }
+.cta-green:hover { background: #34d399; }
+.cta-outline {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-light);
+}
+.cta-outline:hover { background: var(--bg-card-hover); border-color: var(--text-dim); }
+.credit-info {
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--text-dim); line-height: 1.7;
+}
+
+/* ─── CTA Section ──────────────────────────────────────────────────────── */
+.cta-section {
+  padding: 120px 24px; text-align: center; position: relative;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 70%);
+  pointer-events: none; opacity: 0.4;
+}
+.cta-inner { max-width: 600px; margin: 0 auto; position: relative; }
+.cta-inner h2 {
+  font-size: clamp(28px, 4vw, 40px); font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 16px;
+}
+.cta-inner p { font-size: 17px; color: var(--text-mid); margin-bottom: 32px; }
+
+/* ─── Footer ───────────────────────────────────────────────────────────── */
+.footer {
+  padding: 40px 24px; border-top: 1px solid var(--border);
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-brand { font-size: 13px; color: var(--text-dim); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--text-dim); transition: color 0.2s; }
+.footer-links a:hover { color: var(--text); }
+
+/* ─── Animations ───────────────────────────────────────────────────────── */
+.fade-up {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.stagger > * { opacity: 0; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.16,1,0.3,1); }
+.stagger.visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0s; }
+.stagger.visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+.stagger.visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.15s; }
+.stagger.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+.stagger.visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.25s; }
+.stagger.visible > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+
+/* Grid background */
+.grid-bg {
+  position: fixed; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black, transparent);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black, transparent);
+}
+
+/* ─── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .showcase-grid { grid-template-columns: 1fr 1fr; }
+  .steps, .features-grid, .video-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-row-2 { grid-template-columns: 1fr; max-width: 500px; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .footer-inner { flex-direction: column; gap: 16px; }
+}
+@media (max-width: 600px) {
+  .showcase-grid { grid-template-columns: 1fr; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-secondary { width: 100%; max-width: 300px; text-align: center; justify-content: center; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ─── Navigation ──────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div style="display:flex; align-items:center; gap:20px;">
+    <a href="/" class="nav-logo">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#6366f1"/>
+        <path d="M8 22l8-14 8 14" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 18h10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <path d="M13 14h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      ArchEngine
+    </a>
+    <div class="nav-breadcrumb">
+      <span class="sep">/</span>
+      <span class="current">Render Studio</span>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#styles">Styles</a>
+    <a href="#videos">Videos</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://render-studio.fly.dev/login">Log in</a>
+    <a href="https://render-studio.fly.dev/signup" class="nav-cta">Get started</a>
+  </div>
+</nav>
+
+<!-- ─── Hero ────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    Powered by AI
+  </div>
+  <h1>Architectural renders <span class="gradient">in seconds</span></h1>
+  <p>Upload a floor plan, elevation, or SketchUp screenshot. Get a presentation-quality render back before your coffee goes cold.</p>
+  <div class="hero-actions">
+    <a href="https://render-studio.fly.dev/signup" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Try 3 free renders
+    </a>
+    <a href="#styles" class="btn-secondary">See examples</a>
+  </div>
+</section>
+
+<!-- ─── Showcase Gallery ────────────────────────────────────────────── -->
+<div class="showcase">
+  <div class="showcase-grid stagger">
+    <div class="showcase-item">
+      <img src="img/photo_01.jpg" alt="Photorealistic architectural render" loading="lazy">
+      <span class="tag tag-photo">Photorealistic</span>
+    </div>
+    <div class="showcase-item">
+      <img src="img/marker_01.jpg" alt="Pro marker concept sketch" loading="lazy">
+      <span class="tag tag-marker">Pro Marker</span>
+    </div>
+    <div class="showcase-item">
+      <img src="img/photo_02.jpg" alt="Photorealistic render" loading="lazy">
+      <span class="tag tag-photo">Photorealistic</span>
+    </div>
+    <div class="showcase-item">
+      <img src="img/marker_02.jpg" alt="Marker concept sketch" loading="lazy">
+      <span class="tag tag-marker">Pro Marker</span>
+    </div>
+    <div class="showcase-item">
+      <img src="img/photo_03.jpg" alt="Photorealistic render" loading="lazy">
+      <span class="tag tag-photo">Photorealistic</span>
+    </div>
+    <div class="showcase-item">
+      <img src="img/marker_03.jpg" alt="Marker concept sketch" loading="lazy">
+      <span class="tag tag-marker">Pro Marker</span>
+    </div>
+  </div>
+  <div class="showcase-fade"></div>
+</div>
+
+<!-- ─── How It Works ────────────────────────────────────────────────── -->
+<section class="how-section" id="how">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label"><span class="line"></span> How it works</div>
+      <h2 class="section-title">Three steps. Thirty seconds.</h2>
+      <p class="section-subtitle">No rendering software. No waiting overnight. No outsourcing to visualisation studios.</p>
+    </div>
+    <div class="steps stagger">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Upload your drawing</h3>
+        <p>Drop in a floor plan, elevation, section, or SketchUp screenshot. Any image from any source works.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Describe the brief</h3>
+        <p>Tell it about materials, viewpoint, and lighting. Or leave the fields blank and let the AI interpret your drawing.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Generate</h3>
+        <p>Get a pro marker sketch or photorealistic image in under 30 seconds. Iterate until it's right. Create a cinematic video walkthrough.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Features ────────────────────────────────────────────────────── -->
+<section id="features">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label"><span class="line"></span> Features</div>
+      <h2 class="section-title">Built for how architects actually work</h2>
+      <p class="section-subtitle">Not another generic AI image generator. Every feature is designed for architectural practice.</p>
+    </div>
+    <div class="features-grid stagger">
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        </div>
+        <h3>Two render styles</h3>
+        <p>Pro marker concept sketches for early-stage design. Photorealistic renders for client presentations and planning. Switch between them in one click.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <h3>Cinematic videos</h3>
+        <p>Turn any render into an 8-second cinematic walkthrough. Slow pans, approach shots, aerial drone views, and golden hour timelapses.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Style references</h3>
+        <p>Curated reference libraries teach the AI the exact aesthetic you want. Consistent quality across every project, every time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3>Faithful to your design</h3>
+        <p>The AI preserves your building design, viewpoint, and composition exactly. It enhances the drawing, it doesn't reimagine it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        </div>
+        <h3>Any input works</h3>
+        <p>Floor plans, elevations, sections, 3D model screenshots, hand sketches, site photos. Upload anything and get a render back.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Project management</h3>
+        <p>Organise renders by project. Browse previous outputs. Everything is saved and accessible. No files to manage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Style Comparison ────────────────────────────────────────────── -->
+<section class="compare-section" id="styles">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label"><span class="line"></span> Render styles</div>
+      <h2 class="section-title">Two styles. One workflow.</h2>
+      <p class="section-subtitle">Switch between concept and presentation in a single click. Same input, completely different output.</p>
+    </div>
+    <div class="compare-grid stagger">
+      <div class="compare-card">
+        <img src="img/marker_01.jpg" alt="Pro marker architectural sketch" loading="lazy">
+        <div class="compare-info">
+          <span class="style-label marker">Pro Marker</span>
+          <h3>Concept sketches</h3>
+          <p>Fine-liner pen outlines with alcohol marker washes. Warm paper tone, confident linework, people for scale. Perfect for design reviews, planning pre-apps, and early client conversations.</p>
+        </div>
+      </div>
+      <div class="compare-card">
+        <img src="img/photo_01.jpg" alt="Photorealistic architectural render" loading="lazy">
+        <div class="compare-info">
+          <span class="style-label photo">Photorealistic</span>
+          <h3>Presentation renders</h3>
+          <p>Architectural photography quality with natural lighting, realistic materials, and natural vegetation. Professional colour grading. Ready for planning submissions, client sign-off, and marketing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Video Showcase ──────────────────────────────────────────────── -->
+<section class="video-section" id="videos">
+  <div class="section-inner">
+    <div class="fade-up">
+      <div class="section-label"><span class="line"></span> Cinematic video</div>
+      <h2 class="section-title">Turn any render into a walkthrough</h2>
+      <p class="section-subtitle">8-second cinematic videos generated from a single render. Slow pans, approach shots, aerial views. Powered by Veo 3.1.</p>
+    </div>
+    <div class="video-grid stagger">
+      <div class="video-card">
+        <span class="video-badge">Veo 3.1</span>
+        <video src="video/video_01.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="video-overlay"></div>
+        <div class="video-info">
+          <span class="video-label">Approach shot</span>
+          <span class="video-duration">8s</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <span class="video-badge">Veo 3.1</span>
+        <video src="video/video_02.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="video-overlay"></div>
+        <div class="video-info">
+          <span class="video-label">Slow pan</span>
+          <span class="video-duration">8s</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <span class="video-badge">Veo 3.1</span>
+        <video src="video/video_03.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="video-overlay"></div>
+        <div class="video-info">
+          <span class="video-label">Aerial drone</span>
+          <span class="video-duration">8s</span>
+        </div>
+      </div>
+    </div>
+    <p class="video-callout fade-up"><strong>20 credits per video.</strong> Generate directly from any render in your project — no separate upload needed.</p>
+  </div>
+</section>
+
+<!-- ─── AI Banner ───────────────────────────────────────────────────── -->
+<section class="ai-banner">
+  <div class="ai-banner-inner fade-up">
+    <div class="section-label"><span class="line"></span> The engine</div>
+    <h2 class="section-title">Powered by the latest AI models</h2>
+    <p class="section-subtitle" style="margin: 0 auto;">Google Gemini generates the renders. Veo 3.1 creates the videos. We handle the AI so you can focus on the architecture.</p>
+    <div class="ai-chips">
+      <span class="ai-chip"><span class="chip-dot green"></span> Nano Banana Pro</span>
+      <span class="ai-chip"><span class="chip-dot purple"></span> Veo 3.1</span>
+      <span class="ai-chip"><span class="chip-dot blue"></span> 2K Resolution</span>
+      <span class="ai-chip"><span class="chip-dot green"></span> 8s Cinematic Video</span>
+      <span class="ai-chip"><span class="chip-dot purple"></span> Style Reference AI</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Pricing ─────────────────────────────────────────────────────── -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="fade-up" style="text-align:center;">
+      <div class="section-label" style="justify-content:center;"><span class="line"></span> Pricing</div>
+      <h2 class="section-title" style="text-align:center;">Choose how you want to work</h2>
+      <p class="section-subtitle" style="margin:0 auto;">Start with 3 free renders. No card required.</p>
+    </div>
+    <!-- Platform tiers -->
+    <div class="pricing-grid stagger">
+
+      <div class="price-card">
+        <h3>Starter</h3>
+        <div class="price-desc">For smaller practices</div>
+        <div class="price-amount">&pound;49<small>/month</small></div>
+        <div class="price-note">25 credits per month</div>
+        <div class="per-credit">&pound;1.96 per credit</div>
+        <ul class="price-features">
+          <li><span class="check">&#10003;</span> Pro marker + photorealistic</li>
+          <li><span class="check">&#10003;</span> Cinematic video generation</li>
+          <li><span class="check">&#10003;</span> No API key or setup needed</li>
+          <li><span class="check">&#10003;</span> All projects and storage</li>
+        </ul>
+        <div class="credit-info">2 credits = 1 render. 20 credits = 1 video.</div>
+        <div class="price-cta" style="margin-top:20px;">
+          <a href="https://render-studio.fly.dev/signup" class="cta-green">Start free</a>
+        </div>
+      </div>
+
+      <div class="price-card">
+        <h3>Growth</h3>
+        <div class="price-desc">Most practices start here</div>
+        <div class="price-amount">&pound;95<small>/month</small></div>
+        <div class="price-note">50 credits per month</div>
+        <div class="per-credit">&pound;1.90 per credit</div>
+        <ul class="price-features">
+          <li><span class="check">&#10003;</span> Everything in Starter</li>
+          <li><span class="check">&#10003;</span> Priority generation queue</li>
+          <li><span class="check">&#10003;</span> New features as they launch</li>
+        </ul>
+        <div class="credit-info">2 credits = 1 render. 20 credits = 1 video.</div>
+        <div class="price-cta" style="margin-top:20px;">
+          <a href="https://render-studio.fly.dev/signup" class="cta-green">Start free</a>
+        </div>
+      </div>
+
+      <div class="price-card featured">
+        <h3>Professional</h3>
+        <div class="price-desc">For busy design teams</div>
+        <div class="price-amount">&pound;175<small>/month</small></div>
+        <div class="price-note">100 credits per month</div>
+        <div class="per-credit">&pound;1.75 per credit</div>
+        <ul class="price-features">
+          <li><span class="check">&#10003;</span> Everything in Growth</li>
+          <li><span class="check">&#10003;</span> Priority generation queue</li>
+          <li><span class="check">&#10003;</span> New features as they launch</li>
+        </ul>
+        <div class="credit-info">2 credits = 1 render. 20 credits = 1 video.</div>
+        <div class="price-cta" style="margin-top:20px;">
+          <a href="https://render-studio.fly.dev/signup" class="cta-green">Start free</a>
+        </div>
+      </div>
+
+      <div class="price-card" style="border-color: var(--purple);">
+        <span class="best-value">BEST VALUE</span>
+        <h3>Studio</h3>
+        <div class="price-desc">Maximum output, lowest cost</div>
+        <div class="price-amount">&pound;250<small>/month</small></div>
+        <div class="price-note">200 credits per month</div>
+        <div class="per-credit">&pound;1.25 per credit</div>
+        <ul class="price-features">
+          <li><span class="check">&#10003;</span> Everything in Professional</li>
+          <li><span class="check">&#10003;</span> Lowest per-credit cost</li>
+          <li><span class="check">&#10003;</span> Dedicated support</li>
+        </ul>
+        <div class="credit-info">2 credits = 1 render. 20 credits = 1 video.</div>
+        <div class="price-cta" style="margin-top:20px;">
+          <a href="https://render-studio.fly.dev/signup" class="cta-green">Start free</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- One-off tiers -->
+    <div class="pricing-divider">
+      <div class="pricing-divider-label">Or run it yourself</div>
+    </div>
+    <div class="pricing-row-2 stagger">
+
+      <div class="price-card">
+        <h3>Self-Hosted</h3>
+        <div class="price-desc">Your own setup, your API key</div>
+        <div class="price-amount">&pound;2,950</div>
+        <div class="price-note">One-time setup fee</div>
+        <ul class="price-features">
+          <li><span class="check">&#10003;</span> Complete Render Studio setup</li>
+          <li><span class="check">&#10003;</span> Configured for your practice</li>
+          <li><span class="check">&#10003;</span> Unlimited renders</li>
+          <li><span class="check">&#10003;</span> Your own Gemini API key</li>
+          <li><span class="check">&#10003;</span> Full source code handover</li>
+        </ul>
+        <div class="credit-info">Optional: &pound;75/month for updates, changes, and support.</div>
+        <div class="price-cta" style="margin-top:20px;">
+          <a href="mailto:hello@archengine.io?subject=Render%20Studio%20%E2%80%94%20Self-Hosted" class="cta-outline">Get in touch</a>
+        </div>
+      </div>
+
+      <div class="price-card">
+        <h3>Bespoke</h3>
+        <div class="price-desc">Fully custom-built for you</div>
+        <div class="price-amount">&pound;6,950</div>
+        <div class="price-note">One-time build fee</div>
+        <ul class="price-features">
+          <li><span class="check">&#10003;</span> Everything in Self-Hosted</li>
+          <li><span class="check">&#10003;</span> Custom UI with your branding</li>
+          <li><span class="check">&#10003;</span> Custom render styles + prompts</li>
+          <li><span class="check">&#10003;</span> Tailored to your workflow</li>
+          <li><span class="check">&#10003;</span> Dedicated setup and training</li>
+        </ul>
+        <div class="credit-info">Optional: &pound;75/month for updates, changes, and priority support.</div>
+        <div class="price-cta" style="margin-top:20px;">
+          <a href="mailto:hello@archengine.io?subject=Render%20Studio%20%E2%80%94%20Bespoke" class="cta-outline">Get in touch</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Final CTA ───────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-inner fade-up">
+    <h2>Ready to stop waiting<br>for renders?</h2>
+    <p>Try 3 renders free. No card, no setup, no commitment. See what your next project could look like in 30 seconds.</p>
+    <a href="https://render-studio.fly.dev/signup" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Create your account
+    </a>
+  </div>
+</section>
+
+<!-- ─── Footer ──────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">ArchEngine &mdash; AI tools for architecture.</div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://render-studio.fly.dev/login">Log in</a>
+      <a href="https://render-studio.fly.dev/signup">Sign up</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── Scripts ─────────────────────────────────────────────────────── -->
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up, .stagger').forEach(el => observer.observe(el));
+
+// Video hover play
+document.querySelectorAll('.video-card').forEach(card => {
+  const video = card.querySelector('video');
+  card.addEventListener('mouseenter', () => video.play().catch(() => {}));
+  card.addEventListener('mouseleave', () => video.pause());
+});
+
+// Auto-play videos when scrolled into view
+const videoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const video = entry.target.querySelector('video');
+    if (entry.isIntersecting) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.video-card').forEach(card => videoObserver.observe(card));
+
+// Nav scroll effect
+const nav = document.querySelector('.nav');
+window.addEventListener('scroll', () => {
+  nav.style.borderBottomColor = window.scrollY > 50
+    ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)';
+});
+</script>
+
+</body>
+</html>
