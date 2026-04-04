@@ -1,0 +1,19 @@
+<svg width="100%" viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  
+</defs>
+
+<!-- Mark: two geometric fragments -->
+<!-- Fragment 1: filled quarter circle — lens/aperture feel -->
+<path d="M 40 80 Q 40 40 80 40 L 100 40 L 100 80 Z" fill="#111111" style="fill:rgb(17, 17, 17);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- Fragment 2: offset square with corner cutout — frame/viewport -->
+<rect x="94" y="68" width="52" height="52" rx="5" fill="#111111" style="fill:rgb(17, 17, 17);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+<rect x="120" y="68" width="26" height="26" rx="5" fill="white" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+<!-- Wordmark -->
+<text x="172" y="98" fill="#111111" style="fill:rgb(17, 17, 17);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Serif&quot;, Georgia, &quot;Times New Roman&quot;, serif;font-size:56px;font-weight:400;text-anchor:start;dominant-baseline:auto">Render</text>
+<text x="360" y="98" fill="#111111" style="fill:rgb(17, 17, 17);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif;font-size:52px;font-weight:500;text-anchor:start;dominant-baseline:auto">Studio</text>
+<text x="174" y="124" fill="#888888" style="fill:rgb(136, 136, 136);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto">VISUALISATION SOFTWARE</text>
+
+</svg>
