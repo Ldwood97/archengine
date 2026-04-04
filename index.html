@@ -1000,13 +1000,11 @@ function handleWaitlist(e) {
   btn.disabled = true;
   btn.textContent = 'Joining...';
 
-  fetch('/api/waitlist.php', {
+  fetch('https://script.google.com/macros/s/AKfycbze_ycJVE-V8HuJhLWEkzDriSjY6on0LHAQ9ojADdznaKChbnqSExFeELOthDPRiJEuXQ/exec', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email })
   })
-  .then(r => r.json())
-  .then(data => {
+  .then(() => {
     form.style.display = 'none';
     document.querySelector('.waitlist-note').style.display = 'none';
     success.style.display = 'block';
